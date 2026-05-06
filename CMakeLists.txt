@@ -167,7 +167,7 @@ endif()
 if (NOT (DEFINED VIX_UMBRELLA_BUILD AND VIX_UMBRELLA_BUILD))
 
   configure_package_config_file(
-    "${CMAKE_CURRENT_SOURCE_DIR}/cmake/vix_threadpoolConfig.cmake.in"
+    "${CMAKE_CURRENT_SOURCE_DIR}/cmake/vix-threadpool-config.cmake.in"
     "${CMAKE_CURRENT_BINARY_DIR}/vix_threadpoolConfig.cmake"
     INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/vix_threadpool"
   )

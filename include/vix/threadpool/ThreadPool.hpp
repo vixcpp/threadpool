@@ -162,7 +162,7 @@ namespace vix::threadpool
 
       options.detached = true;
 
-      Task wrapped(
+      vix::threadpool::Task wrapped(
           next_task_id(),
           TaskFunction(std::move(task)),
           merge_options(std::move(options)),
@@ -217,7 +217,7 @@ namespace vix::threadpool
         }
       };
 
-      Task task(
+      vix::threadpool::Task task(
           next_task_id(),
           TaskFunction(std::move(wrapper)),
           merge_options(std::move(options)),
@@ -285,7 +285,7 @@ namespace vix::threadpool
         }
       };
 
-      Task task(
+      vix::threadpool::Task task(
           id,
           TaskFunction(std::move(wrapper)),
           merge_options(std::move(options)),

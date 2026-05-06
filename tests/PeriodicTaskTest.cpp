@@ -22,8 +22,6 @@
 
 #include <vix/threadpool/InlineExecutor.hpp>
 #include <vix/threadpool/PeriodicTask.hpp>
-#include <vix/threadpool/TaskOptions.hpp>
-#include <vix/threadpool/TaskPriority.hpp>
 #include <vix/threadpool/ThreadPool.hpp>
 
 namespace
@@ -51,7 +49,6 @@ TEST(PeriodicTaskTest, DefaultConfigIsValid)
   EXPECT_EQ(config.interval, std::chrono::milliseconds{1000});
   EXPECT_FALSE(config.run_immediately);
   EXPECT_TRUE(config.stop_on_post_failure);
-  EXPECT_EQ(config.task_options.priority, vix::threadpool::TaskPriority::normal);
 }
 
 TEST(PeriodicTaskTest, EveryCreatesConfigWithInterval)

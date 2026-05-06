@@ -545,6 +545,48 @@ vix build \
   -DVIX_THREADPOOL_BUILD_BENCHMARKS=ON
 ```
 
+## Benchmark snapshot
+
+Built with:
+
+```sh
+vix build --clean --preset release -- -DVIX_THREADPOOL_BUILD_BENCHMARKS=ON
+```
+
+## Environment:
+
+```txt
+workers: 4
+preset: release
+```
+
+## Results:
+
+```txt
+submit_bench
+  post:          429,862 tasks/s
+  submit_future:493,111 tasks/s
+
+parallel_for_bench
+  chunk 64:      20,631,178 items/s
+  chunk 1024:    491,877,382 items/s
+  chunk 8192:    2,660,034,314 items/s
+
+parallel_map_bench
+  chunk 64:      18,780,552 items/s
+  chunk 1024:    221,627,423 items/s
+  chunk 8192:    220,803,583 items/s
+
+queue_contention_bench
+  2 producers:   727,146 submissions/s
+  4 producers:   1,068,214 submissions/s
+  8 producers:   1,101,522 submissions/s
+
+shutdown_bench
+  drain:         0.218 ms average shutdown
+  no drain:      0.185 ms average shutdown
+```
+
 Release build:
 
 ```sh

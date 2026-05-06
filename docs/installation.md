@@ -78,9 +78,8 @@ cmake --build build
 ## Build examples
 
 ```sh
-cmake -S . -B build -DVIX_THREADPOOL_BUILD_EXAMPLES=ON
-cmake --build build
-./build/examples/basic_post
+vix build --clean --preset dev -- -DVIX_THREADPOOL_BUILD_EXAMPLES=ON
+./build-dev/examples/basic_post
 ```
 
 Other available examples: `submit_future`, `task_priority`, `task_timeout`, `task_cancellation`, `task_group`, `parallel_for`, `parallel_for_each`, `parallel_map`, `parallel_reduce`, `periodic_task`, `metrics`, `shutdown`, `custom_config`.
@@ -88,9 +87,8 @@ Other available examples: `submit_future`, `task_priority`, `task_timeout`, `tas
 ## Build tests
 
 ```sh
-cmake -S . -B build -DVIX_THREADPOOL_BUILD_TESTS=ON
-cmake --build build
-ctest --test-dir build --output-on-failure
+vix build --clean --preset dev -- -DVIX_THREADPOOL_BUILD_TESTS=ON
+ctest --test-dir build-dev --output-on-failure
 ```
 
 Or run the test binary directly:
@@ -102,27 +100,31 @@ Or run the test binary directly:
 ## Build benchmarks
 
 ```sh
-cmake -S . -B build -DVIX_THREADPOOL_BUILD_BENCHMARKS=ON
-cmake --build build
-./build/benchmarks/submit_bench
+vix build --preset release --build-target submit_bench -- -DVIX_THREADPOOL_BUILD_BENCHMARKS=ON
+./build-release/benchmarks/submit_bench
 ```
 
 Available benchmarks: `submit_bench`, `parallel_for_bench`, `parallel_map_bench`, `queue_contention_bench`, `shutdown_bench`.
 
+You can also build one benchmark target directly:
+
+```bash
+vix build --preset release -- -DVIX_THREADPOOL_BUILD_BENCHMARKS=ON --build-target submit_bench
+./build-release/benchmarks/submit_bench
+```
+
 ## Install with CMake
 
 ```sh
-cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
-cmake --build build
-cmake --install build
+vix build --clean --preset release
+cmake --install build-release
 ```
 
 Install to a custom prefix:
 
 ```sh
-cmake -S . -B build -DCMAKE_INSTALL_PREFIX=$HOME/.local
-cmake --build build
-cmake --install build
+vix build --clean --preset release -- -DCMAKE_INSTALL_PREFIX=$HOME/.local
+cmake --install build-release
 ```
 
 Then consume it from another CMake project:
