@@ -1,0 +1,77 @@
+{
+  "name": "threadpool",
+  "namespace": "vix",
+  "version": "0.1.0",
+  "type": "library",
+  "language": "c++",
+  "standard": "c++20",
+  "include": "include",
+  "target": "vix::threadpool",
+  "cmake_target": "vix_threadpool",
+  "license": "MIT",
+  "description": "A modern C++20 threadpool module for Vix with task execution, futures, cancellation, priorities, timeouts, metrics, scopes, periodic tasks, and parallel algorithms.",
+  "keywords": [
+    "cpp",
+    "c++20",
+    "vix",
+    "threadpool",
+    "concurrency",
+    "parallelism",
+    "multithreading",
+    "executor",
+    "futures",
+    "tasks",
+    "cancellation",
+    "timeouts",
+    "metrics",
+    "parallel-for",
+    "parallel-map",
+    "parallel-reduce"
+  ],
+  "deps": [],
+  "features": [
+    "ThreadPool",
+    "post",
+    "submit",
+    "TaskHandle",
+    "Future",
+    "Promise",
+    "TaskOptions",
+    "TaskPriority",
+    "CancellationToken",
+    "CancellationSource",
+    "Timeout",
+    "Deadline",
+    "TaskGroup",
+    "Scope",
+    "PeriodicTask",
+    "InlineExecutor",
+    "ThreadPoolExecutor",
+    "parallel_for",
+    "parallel_for_each",
+    "parallel_map",
+    "parallel_reduce",
+    "parallel_pipeline",
+    "metrics",
+    "stats"
+  ],
+  "build": {
+    "system": "cmake",
+    "minimum_cmake": "3.20",
+    "library_type": "static",
+    "options": {
+      "VIX_THREADPOOL_BUILD_EXAMPLES": false,
+      "VIX_THREADPOOL_BUILD_TESTS": false,
+      "VIX_THREADPOOL_BUILD_BENCHMARKS": false
+    }
+  },
+  "repository": "https://github.com/vixcpp/threadpool",
+  "homepage": "https://vixcpp.com",
+  "documentation": "https://docs.vixcpp.com",
+  "authors": [
+    {
+      "name": "Gaspard Kirira",
+      "github": "https://github.com/GaspardKirira"
+    }
+  ]
+}

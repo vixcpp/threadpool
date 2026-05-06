@@ -1,0 +1,108 @@
+{
+  "version": 6,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 20,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "dev",
+      "displayName": "Dev",
+      "description": "Developer build with examples, tests, and benchmarks enabled.",
+      "generator": "Unix Makefiles",
+      "binaryDir": "${sourceDir}/build",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_CXX_STANDARD": "20",
+        "CMAKE_CXX_STANDARD_REQUIRED": "ON",
+        "CMAKE_CXX_EXTENSIONS": "OFF",
+        "VIX_THREADPOOL_BUILD_EXAMPLES": "ON",
+        "VIX_THREADPOOL_BUILD_TESTS": "ON",
+        "VIX_THREADPOOL_BUILD_BENCHMARKS": "ON"
+      }
+    },
+    {
+      "name": "dev-ninja",
+      "displayName": "Dev Ninja",
+      "description": "Developer Ninja build with examples, tests, and benchmarks enabled.",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build-ninja",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_CXX_STANDARD": "20",
+        "CMAKE_CXX_STANDARD_REQUIRED": "ON",
+        "CMAKE_CXX_EXTENSIONS": "OFF",
+        "VIX_THREADPOOL_BUILD_EXAMPLES": "ON",
+        "VIX_THREADPOOL_BUILD_TESTS": "ON",
+        "VIX_THREADPOOL_BUILD_BENCHMARKS": "ON"
+      }
+    },
+    {
+      "name": "release",
+      "displayName": "Release",
+      "description": "Release build without examples, tests, or benchmarks.",
+      "generator": "Unix Makefiles",
+      "binaryDir": "${sourceDir}/build-release",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_CXX_STANDARD": "20",
+        "CMAKE_CXX_STANDARD_REQUIRED": "ON",
+        "CMAKE_CXX_EXTENSIONS": "OFF",
+        "VIX_THREADPOOL_BUILD_EXAMPLES": "OFF",
+        "VIX_THREADPOOL_BUILD_TESTS": "OFF",
+        "VIX_THREADPOOL_BUILD_BENCHMARKS": "OFF"
+      }
+    },
+    {
+      "name": "release-ninja",
+      "displayName": "Release Ninja",
+      "description": "Release Ninja build without examples, tests, or benchmarks.",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build-release-ninja",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_CXX_STANDARD": "20",
+        "CMAKE_CXX_STANDARD_REQUIRED": "ON",
+        "CMAKE_CXX_EXTENSIONS": "OFF",
+        "VIX_THREADPOOL_BUILD_EXAMPLES": "OFF",
+        "VIX_THREADPOOL_BUILD_TESTS": "OFF",
+        "VIX_THREADPOOL_BUILD_BENCHMARKS": "OFF"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "dev",
+      "configurePreset": "dev"
+    },
+    {
+      "name": "dev-ninja",
+      "configurePreset": "dev-ninja"
+    },
+    {
+      "name": "release",
+      "configurePreset": "release"
+    },
+    {
+      "name": "release-ninja",
+      "configurePreset": "release-ninja"
+    }
+  ],
+  "testPresets": [
+    {
+      "name": "dev",
+      "configurePreset": "dev",
+      "output": {
+        "outputOnFailure": true
+      }
+    },
+    {
+      "name": "dev-ninja",
+      "configurePreset": "dev-ninja",
+      "output": {
+        "outputOnFailure": true
+      }
+    }
+  ]
+}
