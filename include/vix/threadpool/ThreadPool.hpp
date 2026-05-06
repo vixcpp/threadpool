@@ -98,7 +98,7 @@ namespace vix::threadpool
           next_sequence_(0),
           running_(false)
     {
-      start();
+      (void)start();
     }
 
     ThreadPool(const ThreadPool &) = delete;

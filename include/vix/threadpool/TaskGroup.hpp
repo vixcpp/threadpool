@@ -528,14 +528,14 @@ namespace vix::threadpool
     /**
      * @brief Move-construct a task group.
      */
-    TaskGroup(TaskGroup &&) noexcept = default;
+    TaskGroup(TaskGroup &&) noexcept = delete;
 
     /**
      * @brief Move-assign a task group.
      *
      * @return Reference to this group.
      */
-    TaskGroup &operator=(TaskGroup &&) noexcept = default;
+    TaskGroup &operator=(TaskGroup &&) noexcept = delete;
 
     /**
      * @brief Destroy the task group.
