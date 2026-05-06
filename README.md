@@ -185,13 +185,13 @@ target_link_libraries(my_app PRIVATE vix::threadpool)
 Recommended include:
 
 ```cpp
-#include <vix/threadpool/threadpool.hpp>
+#include <vix/threadpool.hpp>
 ```
 
 For smaller compile units, include only what you need:
 
 ```cpp
-#include <vix/threadpool/ThreadPool.hpp>
+#include <vix/ThreadPool.hpp>
 #include <vix/threadpool/ParallelFor.hpp>
 #include <vix/threadpool/Scope.hpp>
 ```
@@ -205,7 +205,7 @@ Use `post()` when you do not need a return value.
 ```cpp
 #include <atomic>
 #include <iostream>
-#include <vix/threadpool/threadpool.hpp>
+#include <vix/threadpool.hpp>
 
 int main()
 {
@@ -235,7 +235,7 @@ Use `submit()` when you need a return value.
 
 ```cpp
 #include <iostream>
-#include <vix/threadpool/threadpool.hpp>
+#include <vix/threadpool.hpp>
 
 int main()
 {
@@ -436,7 +436,7 @@ pool.shutdown();
 #include <chrono>
 #include <iostream>
 #include <thread>
-#include <vix/threadpool/threadpool.hpp>
+#include <vix/threadpool.hpp>
 
 int main()
 {

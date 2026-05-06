@@ -50,7 +50,7 @@ Namespace: `vix::threadpool`
 
 ## `ThreadPool`
 
-Header: `#include <vix/threadpool/ThreadPool.hpp>`
+Header: `#include <vix/threadpool.hpp>`
 
 ### Constructors
 
@@ -1144,7 +1144,7 @@ pool.shutdown();
 
 | Header | Contents |
 |---|---|
-| `<vix/threadpool/threadpool.hpp>` | Complete public API |
+| `<vix/threadpool.hpp>` | Complete public API |
 | `<vix/threadpool/ThreadPool.hpp>` | Main pool |
 | `<vix/threadpool/TaskOptions.hpp>` | Task options |
 | `<vix/threadpool/Future.hpp>` | Future result |

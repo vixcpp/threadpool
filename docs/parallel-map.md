@@ -18,7 +18,7 @@ and you want Vix to split the transformation across worker threads while preserv
 The recommended include is:
 
 ```cpp
-#include <vix/threadpool/threadpool.hpp>
+#include <vix/threadpool.hpp>
 ```
 
 ## Basic usage
@@ -26,7 +26,7 @@ The recommended include is:
 ```cpp
 #include <iostream>
 #include <vector>
-#include <vix/threadpool/threadpool.hpp>
+#include <vix/threadpool.hpp>
 
 int main()
 {
@@ -256,7 +256,7 @@ auto result = vix::threadpool::parallel::map(pool, values, fn);
 #include <iostream>
 #include <string>
 #include <vector>
-#include <vix/threadpool/threadpool.hpp>
+#include <vix/threadpool.hpp>
 
 int main()
 {

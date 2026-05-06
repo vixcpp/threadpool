@@ -7,7 +7,7 @@ Use futures when you need to: wait for a task, retrieve a return value, observe 
 The recommended include is:
 
 ```cpp
-#include <vix/threadpool/threadpool.hpp>
+#include <vix/threadpool.hpp>
 ```
 
 ## Basic idea
@@ -24,7 +24,7 @@ int value = future.get();
 
 ```cpp
 #include <iostream>
-#include <vix/threadpool/threadpool.hpp>
+#include <vix/threadpool.hpp>
 
 int main()
 {

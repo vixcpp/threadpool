@@ -7,7 +7,7 @@ Cancellation lets the caller request that a task should stop, skip execution, or
 The recommended include is:
 
 ```cpp
-#include <vix/threadpool/threadpool.hpp>
+#include <vix/threadpool.hpp>
 ```
 
 ## Important rule

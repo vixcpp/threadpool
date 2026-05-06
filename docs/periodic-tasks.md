@@ -32,7 +32,7 @@ This keeps timing logic separate from task execution.
 #include <chrono>
 #include <iostream>
 #include <thread>
-#include <vix/threadpool/threadpool.hpp>
+#include <vix/threadpool.hpp>
 
 int main()
 {
@@ -171,7 +171,7 @@ A post fails when the executor is stopped, rejects the task, or is no longer val
 #include <chrono>
 #include <iostream>
 #include <thread>
-#include <vix/threadpool/threadpool.hpp>
+#include <vix/threadpool.hpp>
 
 int main()
 {

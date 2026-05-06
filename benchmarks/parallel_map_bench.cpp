@@ -21,7 +21,7 @@
 #include <string>
 #include <vector>
 
-#include <vix/threadpool/threadpool.hpp>
+#include <vix/threadpool/all.hpp>
 
 namespace
 {

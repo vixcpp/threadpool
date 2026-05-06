@@ -17,7 +17,7 @@
 #include <iostream>
 #include <thread>
 
-#include <vix/threadpool/threadpool.hpp>
+#include <vix/threadpool/all.hpp>
 
 int main()
 {

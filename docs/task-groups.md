@@ -71,7 +71,7 @@ This decrements the pending count and updates the result counters.
 #include <chrono>
 #include <iostream>
 #include <thread>
-#include <vix/threadpool/threadpool.hpp>
+#include <vix/threadpool.hpp>
 
 int main()
 {

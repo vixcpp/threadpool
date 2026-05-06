@@ -7,7 +7,7 @@ It provides a high-level API for running work concurrently without exposing user
 The goal is simple:
 
 ```cpp
-#include <vix/threadpool/threadpool.hpp>
+#include <vix/threadpool.hpp>
 
 int main()
 {
@@ -135,7 +135,7 @@ The module is built to integrate with the rest of Vix:
 ### Fire-and-forget task
 
 ```cpp
-#include <vix/threadpool/threadpool.hpp>
+#include <vix/threadpool.hpp>
 
 int main()
 {
@@ -158,7 +158,7 @@ int main()
 
 ```cpp
 #include <iostream>
-#include <vix/threadpool/threadpool.hpp>
+#include <vix/threadpool.hpp>
 
 int main()
 {
@@ -404,13 +404,13 @@ std::cout << stats.rejected_tasks << '\n';
 The recommended include is:
 
 ```cpp
-#include <vix/threadpool/threadpool.hpp>
+#include <vix/threadpool.hpp>
 ```
 
 This exposes the complete public API. For smaller compile units, individual headers can be included directly:
 
 ```cpp
-#include <vix/threadpool/ThreadPool.hpp>
+#include <vix/ThreadPool.hpp>
 #include <vix/threadpool/ParallelFor.hpp>
 #include <vix/threadpool/Scope.hpp>
 ```

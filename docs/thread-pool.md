@@ -7,7 +7,7 @@ It lets users run work concurrently without managing `std::thread`, worker loops
 The recommended include is:
 
 ```cpp
-#include <vix/threadpool/threadpool.hpp>
+#include <vix/threadpool.hpp>
 ```
 
 ## Basic idea
@@ -99,7 +99,7 @@ Use `post()` when you do not need a return value, do not need to wait for a spec
 ```cpp
 #include <atomic>
 #include <iostream>
-#include <vix/threadpool/threadpool.hpp>
+#include <vix/threadpool.hpp>
 
 int main()
 {
@@ -145,7 +145,7 @@ int value = future.get();
 
 ```cpp
 #include <iostream>
-#include <vix/threadpool/threadpool.hpp>
+#include <vix/threadpool.hpp>
 
 int main()
 {
@@ -397,7 +397,7 @@ std::cout << "rejected: " << stats.rejected_tasks << '\n';
 ```cpp
 #include <atomic>
 #include <iostream>
-#include <vix/threadpool/threadpool.hpp>
+#include <vix/threadpool.hpp>
 
 int main()
 {

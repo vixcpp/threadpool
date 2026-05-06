@@ -18,7 +18,7 @@
 #include <mutex>
 #include <vector>
 
-#include <vix/threadpool/threadpool.hpp>
+#include <vix/threadpool/all.hpp>
 
 int main()
 {

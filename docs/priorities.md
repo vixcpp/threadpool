@@ -7,7 +7,7 @@ Priorities let the scheduler prefer important queued work before less important 
 The recommended include is:
 
 ```cpp
-#include <vix/threadpool/threadpool.hpp>
+#include <vix/threadpool.hpp>
 ```
 
 ## Important rule
@@ -49,7 +49,7 @@ auto future = pool.submit([]() { return 42; }, options);
 #include <iostream>
 #include <mutex>
 #include <vector>
-#include <vix/threadpool/threadpool.hpp>
+#include <vix/threadpool.hpp>
 
 int main()
 {

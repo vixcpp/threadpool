@@ -90,7 +90,7 @@ pool.post([]() { do_background_work(); }, options);
 #include <chrono>
 #include <iostream>
 #include <thread>
-#include <vix/threadpool/threadpool.hpp>
+#include <vix/threadpool.hpp>
 
 int main()
 {
@@ -126,7 +126,7 @@ Expected final state: `completed` / `success`.
 #include <chrono>
 #include <iostream>
 #include <thread>
-#include <vix/threadpool/threadpool.hpp>
+#include <vix/threadpool.hpp>
 
 int main()
 {

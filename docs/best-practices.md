@@ -12,7 +12,7 @@ without hiding correctness problems
 The recommended include is:
 
 ```cpp
-#include <vix/threadpool/threadpool.hpp>
+#include <vix/threadpool.hpp>
 ```
 
 ## Use one reusable pool

@@ -16,7 +16,7 @@
 #include <atomic>
 #include <iostream>
 
-#include <vix/threadpool/threadpool.hpp>
+#include <vix/threadpool/all.hpp>
 
 int main()
 {

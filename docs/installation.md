@@ -5,7 +5,7 @@ This page explains how to add and build the Vix threadpool module.
 The recommended include is:
 
 ```cpp
-#include <vix/threadpool/threadpool.hpp>
+#include <vix/threadpool.hpp>
 ```
 
 ## Requirements
@@ -29,7 +29,7 @@ modules/threadpool/
 ├── include/
 │   └── vix/
 │       └── threadpool/
-│           └── threadpool.hpp
+│           └── all.hpp
 ├── src/
 ├── examples/
 ├── tests/
@@ -156,7 +156,7 @@ target_link_libraries(my_app PRIVATE vix::threadpool)
 
 ```cpp
 #include <iostream>
-#include <vix/threadpool/threadpool.hpp>
+#include <vix/threadpool.hpp>
 
 int main()
 {
@@ -244,7 +244,7 @@ target_link_libraries(my_app PRIVATE vix::threadpool)
 Use the umbrella header for application code:
 
 ```cpp
-#include <vix/threadpool/threadpool.hpp>
+#include <vix/threadpool.hpp>
 ```
 
 Use direct headers only when you need smaller compile units:
@@ -260,7 +260,7 @@ Create `main.cpp`:
 
 ```cpp
 #include <iostream>
-#include <vix/threadpool/threadpool.hpp>
+#include <vix/threadpool.hpp>
 
 int main()
 {

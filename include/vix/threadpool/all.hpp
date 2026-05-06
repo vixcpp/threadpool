@@ -22,7 +22,7 @@
  * Include this file when you want access to the complete public threadpool API:
  *
  * @code
- * #include <vix/threadpool/threadpool.hpp>
+ * #include <vix/threadpool/all.hpp>
  * @endcode
  *
  * This header exposes:

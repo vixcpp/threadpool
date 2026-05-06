@@ -16,7 +16,7 @@ and you want Vix to split the work across worker threads.
 The recommended include is:
 
 ```cpp
-#include <vix/threadpool/threadpool.hpp>
+#include <vix/threadpool.hpp>
 ```
 
 ## Basic usage
@@ -25,7 +25,7 @@ The recommended include is:
 #include <cstddef>
 #include <iostream>
 #include <vector>
-#include <vix/threadpool/threadpool.hpp>
+#include <vix/threadpool.hpp>
 
 int main()
 {
@@ -186,7 +186,7 @@ Use `parallel_reduce` for reductions. Use `std::atomic` for shared counters. Use
 #include <cstddef>
 #include <iostream>
 #include <vector>
-#include <vix/threadpool/threadpool.hpp>
+#include <vix/threadpool.hpp>
 
 int main()
 {

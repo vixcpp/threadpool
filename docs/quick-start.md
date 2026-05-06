@@ -32,7 +32,7 @@ Use `post()` when you want to run work in the background and you do not need a r
 ```cpp
 #include <atomic>
 #include <iostream>
-#include <vix/threadpool/threadpool.hpp>
+#include <vix/threadpool.hpp>
 
 int main()
 {
@@ -68,7 +68,7 @@ Use `submit()` when the task returns a value.
 
 ```cpp
 #include <iostream>
-#include <vix/threadpool/threadpool.hpp>
+#include <vix/threadpool.hpp>
 
 int main()
 {
@@ -102,7 +102,7 @@ result: 42
 ```cpp
 #include <atomic>
 #include <iostream>
-#include <vix/threadpool/threadpool.hpp>
+#include <vix/threadpool.hpp>
 
 int main()
 {
@@ -150,7 +150,7 @@ auto future =
 
 ```cpp
 #include <iostream>
-#include <vix/threadpool/threadpool.hpp>
+#include <vix/threadpool.hpp>
 
 int main()
 {
@@ -181,7 +181,7 @@ Priorities are used by the task queue to decide which queued task should run fir
 #include <chrono>
 #include <iostream>
 #include <thread>
-#include <vix/threadpool/threadpool.hpp>
+#include <vix/threadpool.hpp>
 
 int main()
 {
@@ -232,7 +232,7 @@ Use `handle()` when you want a cancellable task.
 #include <chrono>
 #include <iostream>
 #include <thread>
-#include <vix/threadpool/threadpool.hpp>
+#include <vix/threadpool.hpp>
 
 int main()
 {
@@ -276,7 +276,7 @@ Cancellation is cooperative. If cancellation is requested before the task starts
 #include <cstddef>
 #include <iostream>
 #include <vector>
-#include <vix/threadpool/threadpool.hpp>
+#include <vix/threadpool.hpp>
 
 int main()
 {
@@ -311,7 +311,7 @@ int main()
 ```cpp
 #include <iostream>
 #include <vector>
-#include <vix/threadpool/threadpool.hpp>
+#include <vix/threadpool.hpp>
 
 int main()
 {
@@ -345,7 +345,7 @@ int main()
 ```cpp
 #include <iostream>
 #include <vector>
-#include <vix/threadpool/threadpool.hpp>
+#include <vix/threadpool.hpp>
 
 int main()
 {
@@ -380,7 +380,7 @@ int main()
 ```cpp
 #include <iostream>
 #include <vector>
-#include <vix/threadpool/threadpool.hpp>
+#include <vix/threadpool.hpp>
 
 int main()
 {
@@ -419,7 +419,7 @@ sum: 10
 ```cpp
 #include <atomic>
 #include <iostream>
-#include <vix/threadpool/threadpool.hpp>
+#include <vix/threadpool.hpp>
 
 int main()
 {
@@ -466,7 +466,7 @@ counter: 2
 #include <chrono>
 #include <iostream>
 #include <thread>
-#include <vix/threadpool/threadpool.hpp>
+#include <vix/threadpool.hpp>
 
 int main()
 {
@@ -507,7 +507,7 @@ int main()
 
 ```cpp
 #include <iostream>
-#include <vix/threadpool/threadpool.hpp>
+#include <vix/threadpool.hpp>
 
 int main()
 {
@@ -547,7 +547,7 @@ Start with this:
 
 ```cpp
 #include <iostream>
-#include <vix/threadpool/threadpool.hpp>
+#include <vix/threadpool.hpp>
 
 int main()
 {

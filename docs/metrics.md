@@ -7,7 +7,7 @@ Metrics help answer questions like: how many workers exist? how many tasks are p
 The recommended include is:
 
 ```cpp
-#include <vix/threadpool/threadpool.hpp>
+#include <vix/threadpool.hpp>
 ```
 
 ## Metrics vs Stats
@@ -35,7 +35,7 @@ const auto metrics = pool.metrics();
 #include <chrono>
 #include <iostream>
 #include <thread>
-#include <vix/threadpool/threadpool.hpp>
+#include <vix/threadpool.hpp>
 
 int main()
 {
@@ -108,7 +108,7 @@ const auto stats = pool.stats();
 
 ```cpp
 #include <iostream>
-#include <vix/threadpool/threadpool.hpp>
+#include <vix/threadpool.hpp>
 
 int main()
 {

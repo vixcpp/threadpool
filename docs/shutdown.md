@@ -7,7 +7,7 @@ Shutdown is important because a thread pool owns worker threads. Those workers m
 The recommended include is:
 
 ```cpp
-#include <vix/threadpool/threadpool.hpp>
+#include <vix/threadpool.hpp>
 ```
 
 ## Basic usage
@@ -27,7 +27,7 @@ pool.shutdown();
 #include <chrono>
 #include <iostream>
 #include <thread>
-#include <vix/threadpool/threadpool.hpp>
+#include <vix/threadpool.hpp>
 
 int main()
 {
@@ -138,7 +138,7 @@ vix::threadpool::ThreadPool pool(config);
 #include <chrono>
 #include <iostream>
 #include <thread>
-#include <vix/threadpool/threadpool.hpp>
+#include <vix/threadpool.hpp>
 
 int main()
 {
@@ -176,7 +176,7 @@ When `drain_on_shutdown = false`, workers may stop before all queued tasks finis
 ```cpp
 #include <atomic>
 #include <iostream>
-#include <vix/threadpool/threadpool.hpp>
+#include <vix/threadpool.hpp>
 
 int main()
 {
