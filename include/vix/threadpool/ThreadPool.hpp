@@ -301,6 +301,75 @@ namespace vix::threadpool
     }
 
     /**
+     * @brief Submit a callable with a pre-reserved task id and return a cancellable task handle.
+     *
+     * This is useful when higher-level systems need to know the task id before
+     * building the submitted callable.
+     *
+     * @tparam Fn Callable type.
+     * @param id Pre-reserved task id.
+     * @param fn Callable to execute.
+     * @param options Task submission options.
+     * @return Task handle for the submitted task.
+     */
+    template <class Fn>
+    [[nodiscard]] auto handle_with_id(
+        TaskId id,
+        Fn &&fn,
+        TaskOptions options = TaskOptions{})
+        -> TaskHandle<std::invoke_result_t<std::decay_t<Fn> &>>
+    {
+      using Function = std::decay_t<Fn>;
+      using Result = std::invoke_result_t<Function &>;
+
+      CancellationSource source;
+      options.set_cancellation(source.token());
+
+      Promise<Result> promise;
+      Future<Result> future = promise.get_future();
+
+      auto sharedPromise =
+          std::make_shared<Promise<Result>>(std::move(promise));
+
+      Function function(std::forward<Fn>(fn));
+
+      auto wrapper =
+          [sharedPromise, function = std::move(function)]() mutable
+      {
+        try
+        {
+          if constexpr (std::is_void_v<Result>)
+          {
+            detail::invoke(function);
+            sharedPromise->set_value();
+          }
+          else
+          {
+            sharedPromise->set_value(detail::invoke(function));
+          }
+        }
+        catch (...)
+        {
+          sharedPromise->set_current_exception();
+        }
+      };
+
+      vix::threadpool::Task task(
+          id,
+          TaskFunction(std::move(wrapper)),
+          merge_options(std::move(options)),
+          next_sequence());
+
+      const bool accepted = scheduler_.submit(std::move(task));
+      if (!accepted)
+      {
+        sharedPromise->set_error(ThreadPoolErrc::rejected);
+      }
+
+      return TaskHandle<Result>{id, std::move(future), std::move(source)};
+    }
+
+    /**
      * @brief Create a periodic task bound to this pool.
      *
      * The returned PeriodicTask is not started automatically.
