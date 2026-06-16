@@ -12,7 +12,28 @@
 
 include(CTest)
 
-find_package(GTest REQUIRED)
+# In umbrella builds, googletest may already be provided by the root
+# CMakeLists.txt through FetchContent. Do not force a system GTest.
+if (NOT TARGET GTest::gtest OR NOT TARGET GTest::gtest_main)
+  find_package(GTest QUIET)
+endif()
+
+if (NOT TARGET GTest::gtest OR NOT TARGET GTest::gtest_main)
+  include(FetchContent)
+
+  FetchContent_Declare(
+    googletest
+    GIT_REPOSITORY https://github.com/google/googletest.git
+    GIT_TAG        v1.14.0
+  )
+
+  set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+  FetchContent_MakeAvailable(googletest)
+endif()
+
+if (NOT TARGET GTest::gtest OR NOT TARGET GTest::gtest_main)
+  message(FATAL_ERROR "GTest targets are required to build vix::threadpool tests")
+endif()
 
 set(VIX_THREADPOOL_TEST_SOURCES
   ExecutorTest.cpp
