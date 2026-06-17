@@ -63,15 +63,15 @@ foreach(test_source IN LISTS VIX_THREADPOOL_TEST_SOURCES)
     ${test_source}
   )
 
+  target_compile_features(${test_name}
+    PRIVATE
+      cxx_std_20
+  )
+
   target_link_libraries(${test_name}
     PRIVATE
       vix::threadpool
       GTest::gtest_main
-  )
-
-  target_compile_features(${test_name}
-    PRIVATE
-      cxx_std_20
   )
 
   if (NOT MSVC)
@@ -80,6 +80,19 @@ foreach(test_source IN LISTS VIX_THREADPOOL_TEST_SOURCES)
         -Wall
         -Wextra
         -Wpedantic
+    )
+  endif()
+
+  if (VIX_ENABLE_SANITIZERS AND NOT MSVC)
+    target_compile_options(${test_name}
+      PRIVATE
+        -fno-omit-frame-pointer
+        -fsanitize=address,undefined
+    )
+
+    target_link_options(${test_name}
+      PRIVATE
+        -fsanitize=address,undefined
     )
   endif()
 
