@@ -194,6 +194,18 @@ namespace vix::threadpool
       auto sharedPromise =
           std::make_shared<Promise<Result>>(std::move(promise));
 
+      TaskOptions mergedOptions = merge_options(std::move(options));
+
+      if (mergedOptions.should_skip_before_run())
+      {
+        sharedPromise->set_error(
+            mergedOptions.cancellation.cancelled()
+                ? ThreadPoolErrc::cancelled
+                : ThreadPoolErrc::timeout);
+
+        return future;
+      }
+
       Function function(std::forward<Fn>(fn));
 
       auto wrapper =
@@ -220,7 +232,7 @@ namespace vix::threadpool
       vix::threadpool::Task task(
           next_task_id(),
           TaskFunction(std::move(wrapper)),
-          merge_options(std::move(options)),
+          std::move(mergedOptions),
           next_sequence());
 
       const bool accepted = scheduler_.submit(std::move(task));
@@ -262,6 +274,18 @@ namespace vix::threadpool
       auto sharedPromise =
           std::make_shared<Promise<Result>>(std::move(promise));
 
+      TaskOptions mergedOptions = merge_options(std::move(options));
+
+      if (mergedOptions.should_skip_before_run())
+      {
+        sharedPromise->set_error(
+            mergedOptions.cancellation.cancelled()
+                ? ThreadPoolErrc::cancelled
+                : ThreadPoolErrc::timeout);
+
+        return TaskHandle<Result>{id, std::move(future), std::move(source)};
+      }
+
       Function function(std::forward<Fn>(fn));
 
       auto wrapper =
@@ -288,7 +312,7 @@ namespace vix::threadpool
       vix::threadpool::Task task(
           id,
           TaskFunction(std::move(wrapper)),
-          merge_options(std::move(options)),
+          std::move(mergedOptions),
           next_sequence());
 
       const bool accepted = scheduler_.submit(std::move(task));
