@@ -162,10 +162,17 @@ namespace vix::threadpool
 
       options.detached = true;
 
+      TaskOptions mergedOptions = merge_options(std::move(options));
+
+      if (!accepts_submission(mergedOptions))
+      {
+        return false;
+      }
+
       vix::threadpool::Task wrapped(
           next_task_id(),
           TaskFunction(std::move(task)),
-          merge_options(std::move(options)),
+          std::move(mergedOptions),
           next_sequence());
 
       return scheduler_.submit(std::move(wrapped));
@@ -196,6 +203,12 @@ namespace vix::threadpool
 
       TaskOptions mergedOptions = merge_options(std::move(options));
 
+      if (!accepts_submission(mergedOptions))
+      {
+        sharedPromise->set_error(ThreadPoolErrc::rejected);
+        return future;
+      }
+
       if (mergedOptions.should_skip_before_run())
       {
         sharedPromise->set_error(
@@ -206,13 +219,35 @@ namespace vix::threadpool
         return future;
       }
 
+      CancellationToken observedCancellation = mergedOptions.cancellation;
+      Deadline observedDeadline = mergedOptions.deadline;
+
+      TaskOptions executionOptions = mergedOptions;
+      executionOptions.cancellation = CancellationToken{};
+      executionOptions.deadline = Deadline::disabled();
+
       Function function(std::forward<Fn>(fn));
 
       auto wrapper =
-          [sharedPromise, function = std::move(function)]() mutable
+          [sharedPromise,
+           function = std::move(function),
+           observedCancellation,
+           observedDeadline]() mutable
       {
         try
         {
+          if (observedCancellation.cancelled())
+          {
+            sharedPromise->set_error(ThreadPoolErrc::cancelled);
+            return;
+          }
+
+          if (observedDeadline.expired())
+          {
+            sharedPromise->set_error(ThreadPoolErrc::timeout);
+            return;
+          }
+
           if constexpr (std::is_void_v<Result>)
           {
             detail::invoke(function);
@@ -232,7 +267,7 @@ namespace vix::threadpool
       vix::threadpool::Task task(
           next_task_id(),
           TaskFunction(std::move(wrapper)),
-          std::move(mergedOptions),
+          std::move(executionOptions),
           next_sequence());
 
       const bool accepted = scheduler_.submit(std::move(task));
@@ -276,6 +311,12 @@ namespace vix::threadpool
 
       TaskOptions mergedOptions = merge_options(std::move(options));
 
+      if (!accepts_submission(mergedOptions))
+      {
+        sharedPromise->set_error(ThreadPoolErrc::rejected);
+        return TaskHandle<Result>{id, std::move(future), std::move(source)};
+      }
+
       if (mergedOptions.should_skip_before_run())
       {
         sharedPromise->set_error(
@@ -286,13 +327,35 @@ namespace vix::threadpool
         return TaskHandle<Result>{id, std::move(future), std::move(source)};
       }
 
+      CancellationToken observedCancellation = mergedOptions.cancellation;
+      Deadline observedDeadline = mergedOptions.deadline;
+
+      TaskOptions executionOptions = mergedOptions;
+      executionOptions.cancellation = CancellationToken{};
+      executionOptions.deadline = Deadline::disabled();
+
       Function function(std::forward<Fn>(fn));
 
       auto wrapper =
-          [sharedPromise, function = std::move(function)]() mutable
+          [sharedPromise,
+           function = std::move(function),
+           observedCancellation,
+           observedDeadline]() mutable
       {
         try
         {
+          if (observedCancellation.cancelled())
+          {
+            sharedPromise->set_error(ThreadPoolErrc::cancelled);
+            return;
+          }
+
+          if (observedDeadline.expired())
+          {
+            sharedPromise->set_error(ThreadPoolErrc::timeout);
+            return;
+          }
+
           if constexpr (std::is_void_v<Result>)
           {
             detail::invoke(function);
@@ -312,7 +375,7 @@ namespace vix::threadpool
       vix::threadpool::Task task(
           id,
           TaskFunction(std::move(wrapper)),
-          std::move(mergedOptions),
+          std::move(executionOptions),
           next_sequence());
 
       const bool accepted = scheduler_.submit(std::move(task));
@@ -355,13 +418,53 @@ namespace vix::threadpool
       auto sharedPromise =
           std::make_shared<Promise<Result>>(std::move(promise));
 
+      TaskOptions mergedOptions = merge_options(std::move(options));
+
+      if (!accepts_submission(mergedOptions))
+      {
+        sharedPromise->set_error(ThreadPoolErrc::rejected);
+        return TaskHandle<Result>{id, std::move(future), std::move(source)};
+      }
+
+      if (mergedOptions.should_skip_before_run())
+      {
+        sharedPromise->set_error(
+            mergedOptions.cancellation.cancelled()
+                ? ThreadPoolErrc::cancelled
+                : ThreadPoolErrc::timeout);
+
+        return TaskHandle<Result>{id, std::move(future), std::move(source)};
+      }
+
+      CancellationToken observedCancellation = mergedOptions.cancellation;
+      Deadline observedDeadline = mergedOptions.deadline;
+
+      TaskOptions executionOptions = mergedOptions;
+      executionOptions.cancellation = CancellationToken{};
+      executionOptions.deadline = Deadline::disabled();
+
       Function function(std::forward<Fn>(fn));
 
       auto wrapper =
-          [sharedPromise, function = std::move(function)]() mutable
+          [sharedPromise,
+           function = std::move(function),
+           observedCancellation,
+           observedDeadline]() mutable
       {
         try
         {
+          if (observedCancellation.cancelled())
+          {
+            sharedPromise->set_error(ThreadPoolErrc::cancelled);
+            return;
+          }
+
+          if (observedDeadline.expired())
+          {
+            sharedPromise->set_error(ThreadPoolErrc::timeout);
+            return;
+          }
+
           if constexpr (std::is_void_v<Result>)
           {
             detail::invoke(function);
@@ -381,7 +484,7 @@ namespace vix::threadpool
       vix::threadpool::Task task(
           id,
           TaskFunction(std::move(wrapper)),
-          merge_options(std::move(options)),
+          std::move(executionOptions),
           next_sequence());
 
       const bool accepted = scheduler_.submit(std::move(task));
@@ -556,6 +659,26 @@ namespace vix::threadpool
       schedulerConfig.drain_on_stop = config.drain_on_shutdown;
       schedulerConfig.worker_name_prefix = "vix-tp";
       return schedulerConfig.normalized();
+    }
+
+    /**
+     * @brief Check whether a task may be submitted to the scheduler.
+     *
+     * Ordinary work is accepted only while the pool is running.
+     * Tasks explicitly marked allow_after_stop may still be accepted during the
+     * shutdown window, but never after the scheduler has fully stopped.
+     *
+     * @param options Task options.
+     * @return true if submission is allowed.
+     */
+    [[nodiscard]] bool accepts_submission(const TaskOptions &options) const noexcept
+    {
+      if (running_.load(std::memory_order_acquire))
+      {
+        return true;
+      }
+
+      return options.allow_after_stop && scheduler_.running();
     }
 
     /**

@@ -248,16 +248,23 @@ TEST(StressTest, RepeatedCreateAndShutdownIsSafe)
 
     std::atomic<int> counter{0};
 
+    std::vector<vix::threadpool::Future<void>> futures;
+    futures.reserve(20);
+
     for (int i = 0; i < 20; ++i)
     {
-      pool.post(
-          [&counter]()
-          {
-            counter.fetch_add(1, std::memory_order_relaxed);
-          });
+      futures.push_back(
+          pool.submit(
+              [&counter]()
+              {
+                counter.fetch_add(1, std::memory_order_relaxed);
+              }));
     }
 
-    pool.wait_idle();
+    for (auto &future : futures)
+    {
+      future.get();
+    }
 
     EXPECT_EQ(counter.load(std::memory_order_relaxed), 20);
 
