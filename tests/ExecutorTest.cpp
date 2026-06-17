@@ -16,6 +16,7 @@
 #include <atomic>
 #include <chrono>
 #include <cstdint>
+#include <functional>
 #include <thread>
 
 #include <gtest/gtest.h>
@@ -46,11 +47,15 @@ namespace
   }
 }
 
-TEST(ExecutorTest, InlineExecutorRunsPostedTaskImmediately)
+TEST(ExecutorTest, ThreadPoolExecutorCanPostToThreadPool)
 {
-  vix::threadpool::InlineExecutor executor;
+  vix::threadpool::ThreadPool pool(2);
+  vix::threadpool::ThreadPoolExecutor executor(pool);
 
   std::atomic<int> counter{0};
+
+  EXPECT_TRUE(executor.valid());
+  EXPECT_TRUE(static_cast<bool>(executor));
 
   const bool accepted =
       executor.post(
@@ -60,15 +65,23 @@ TEST(ExecutorTest, InlineExecutorRunsPostedTaskImmediately)
           });
 
   EXPECT_TRUE(accepted);
+
+  ASSERT_TRUE(
+      wait_until_true(
+          [&counter]()
+          {
+            return counter.load(std::memory_order_relaxed) == 1;
+          }));
+
+  executor.wait_idle();
+
   EXPECT_EQ(counter.load(std::memory_order_relaxed), 1);
   EXPECT_TRUE(executor.idle());
   EXPECT_TRUE(executor.running());
 
-  const vix::threadpool::ThreadPoolMetrics metrics = executor.metrics();
+  executor.shutdown();
 
-  EXPECT_EQ(metrics.submitted_tasks, std::uint64_t{1});
-  EXPECT_EQ(metrics.completed_tasks, std::uint64_t{1});
-  EXPECT_EQ(metrics.rejected_tasks, std::uint64_t{0});
+  EXPECT_FALSE(executor.running());
 }
 
 TEST(ExecutorTest, InlineExecutorRejectsEmptyTask)
