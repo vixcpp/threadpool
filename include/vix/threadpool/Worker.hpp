@@ -219,7 +219,11 @@ namespace vix::threadpool
      */
     void stop() noexcept
     {
-      stopping_.store(true, std::memory_order_release);
+      {
+        std::lock_guard<std::mutex> lock(mutex_);
+        stopping_.store(true, std::memory_order_release);
+      }
+
       thread_.stop();
       cv_.notify_all();
     }
@@ -638,7 +642,7 @@ namespace vix::threadpool
             });
       }
 
-      if (queue_.empty())
+      if (queue_.empty() && !stopping())
       {
         wait_strategy_.wait(idleStreak);
       }

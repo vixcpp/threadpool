@@ -21,6 +21,7 @@
 #include <string>
 #include <thread>
 #include <vector>
+#include <functional>
 
 #include <gtest/gtest.h>
 
@@ -337,37 +338,80 @@ TEST(ThreadPoolTest, ClearRemovesQueuedTasks)
 
   vix::threadpool::ThreadPool pool(config);
 
+  std::atomic<bool> blocker_started{false};
+  std::atomic<bool> release_blocker{false};
+  std::atomic<int> counter{0};
+
+  struct ReleaseGuard
+  {
+    std::atomic<bool> &flag;
+
+    ~ReleaseGuard()
+    {
+      flag.store(true, std::memory_order_release);
+    }
+  };
+
+  ReleaseGuard guard{release_blocker};
+
   auto blocker =
       pool.submit(
-          []()
+          [&blocker_started, &release_blocker]()
           {
-            std::this_thread::sleep_for(std::chrono::milliseconds{80});
+            blocker_started.store(true, std::memory_order_release);
+
+            while (!release_blocker.load(std::memory_order_acquire))
+            {
+              std::this_thread::sleep_for(std::chrono::milliseconds{1});
+            }
           });
 
-  for (int i = 0; i < 10; ++i)
+  ASSERT_TRUE(
+      wait_until_true(
+          [&blocker_started]()
+          {
+            return blocker_started.load(std::memory_order_acquire);
+          }));
+
+  constexpr int queuedTaskCount = 10;
+
+  for (int i = 0; i < queuedTaskCount; ++i)
   {
-    pool.post(
-        []()
-        {
-          std::this_thread::sleep_for(std::chrono::milliseconds{10});
-        });
+    const bool accepted =
+        pool.post(
+            [&counter]()
+            {
+              counter.fetch_add(1, std::memory_order_relaxed);
+            });
+
+    ASSERT_TRUE(accepted);
   }
 
-  const bool sawPending =
+  ASSERT_TRUE(
       wait_until_true(
           [&pool]()
           {
             return pool.pending() > 0;
-          });
-
-  EXPECT_TRUE(sawPending);
+          }));
 
   const std::size_t removed = pool.clear();
 
-  EXPECT_GE(removed, std::size_t{0});
+  EXPECT_GT(removed, std::size_t{0});
+  EXPECT_LE(removed, static_cast<std::size_t>(queuedTaskCount));
+
+  release_blocker.store(true, std::memory_order_release);
 
   blocker.get();
+
+  pool.wait_idle();
+
+  EXPECT_EQ(
+      counter.load(std::memory_order_relaxed),
+      queuedTaskCount - static_cast<int>(removed));
+
   pool.shutdown();
+
+  EXPECT_FALSE(pool.running());
 }
 
 TEST(ThreadPoolTest, DefaultTimeoutIsMergedIntoTaskOptions)
