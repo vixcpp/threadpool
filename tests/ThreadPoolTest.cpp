@@ -106,6 +106,13 @@ TEST(ThreadPoolTest, PostExecutesFireAndForgetTask)
 
   EXPECT_TRUE(accepted);
 
+  EXPECT_TRUE(
+      wait_until_true(
+          [&counter]()
+          {
+            return counter.load(std::memory_order_relaxed) == 1;
+          }));
+
   pool.wait_idle();
 
   EXPECT_EQ(counter.load(std::memory_order_relaxed), 1);
