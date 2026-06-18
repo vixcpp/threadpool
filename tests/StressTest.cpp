@@ -310,6 +310,13 @@ TEST(StressTest, BoundedQueueRejectsSomeTasksUnderPressure)
 
   pool.wait_idle();
 
+  EXPECT_TRUE(
+      wait_until_true(
+          [&completed, accepted]()
+          {
+            return completed.load(std::memory_order_relaxed) == accepted;
+          }));
+
   EXPECT_GE(accepted, 1);
   EXPECT_GE(rejected, 1);
   EXPECT_EQ(completed.load(std::memory_order_relaxed), accepted);
