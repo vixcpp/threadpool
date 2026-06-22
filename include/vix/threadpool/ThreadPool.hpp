@@ -529,8 +529,18 @@ namespace vix::threadpool
      */
     void wait_idle() override
     {
-      while (!idle())
+      bool observedIdle = false;
+
+      while (true)
       {
+        const bool currentlyIdle = idle();
+
+        if (currentlyIdle && observedIdle)
+        {
+          return;
+        }
+
+        observedIdle = currentlyIdle;
         std::this_thread::yield();
       }
     }

@@ -17,6 +17,7 @@
 #include <chrono>
 #include <cstddef>
 #include <cstdint>
+#include <future>
 #include <thread>
 
 #include <gtest/gtest.h>
@@ -213,20 +214,29 @@ TEST(ShutdownTest, ClearBeforeShutdownRemovesPendingTasks)
 
   vix::threadpool::ThreadPool pool(config);
 
+  std::promise<void> blockerStarted;
+  auto blockerStartedFuture = blockerStarted.get_future();
+
   auto blocker =
       pool.submit(
-          []()
+          [&blockerStarted]()
           {
+            blockerStarted.set_value();
             std::this_thread::sleep_for(std::chrono::milliseconds{80});
           });
 
+  ASSERT_EQ(
+      blockerStartedFuture.wait_for(std::chrono::seconds{1}),
+      std::future_status::ready);
+
   for (int i = 0; i < 20; ++i)
   {
-    pool.post(
-        []()
-        {
-          std::this_thread::sleep_for(std::chrono::milliseconds{10});
-        });
+    ASSERT_TRUE(
+        pool.post(
+            []()
+            {
+              std::this_thread::sleep_for(std::chrono::milliseconds{10});
+            }));
   }
 
   const bool hasPending =
