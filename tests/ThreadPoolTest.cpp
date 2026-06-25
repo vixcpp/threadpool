@@ -269,12 +269,12 @@ TEST(ThreadPoolTest, WaitIdleWaitsForPendingWork)
 
   for (int i = 0; i < 8; ++i)
   {
-    pool.post(
+    ASSERT_TRUE(pool.post(
         [&counter]()
         {
           std::this_thread::sleep_for(std::chrono::milliseconds{5});
           counter.fetch_add(1, std::memory_order_relaxed);
-        });
+        }));
   }
 
   pool.wait_idle();
@@ -291,8 +291,8 @@ TEST(ThreadPoolTest, MetricsReflectExecutedTasks)
 
   for (int i = 0; i < 4; ++i)
   {
-    pool.post(
-        []() {});
+    ASSERT_TRUE(pool.post(
+        []() {}));
   }
 
   pool.wait_idle();

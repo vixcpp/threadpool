@@ -109,12 +109,12 @@ TEST(ShutdownTest, WaitIdleBeforeShutdownWaitsForTasks)
 
   for (int i = 0; i < 10; ++i)
   {
-    pool.post(
+    ASSERT_TRUE(pool.post(
         [&counter]()
         {
           std::this_thread::sleep_for(std::chrono::milliseconds{2});
           counter.fetch_add(1, std::memory_order_relaxed);
-        });
+        }));
   }
 
   pool.wait_idle();
@@ -168,12 +168,12 @@ TEST(ShutdownTest, ShutdownWithoutDrainMayStopBeforeQueuedTasksFinish)
 
   for (int i = 0; i < 20; ++i)
   {
-    pool.post(
+    ASSERT_TRUE(pool.post(
         [&counter]()
         {
           std::this_thread::sleep_for(std::chrono::milliseconds{5});
           counter.fetch_add(1, std::memory_order_relaxed);
-        });
+        }));
   }
 
   pool.shutdown();
@@ -264,8 +264,8 @@ TEST(ShutdownTest, MetricsRemainReadableAfterShutdown)
 
   for (int i = 0; i < 4; ++i)
   {
-    pool.post(
-        []() {});
+    ASSERT_TRUE(pool.post(
+        []() {}));
   }
 
   pool.wait_idle();

@@ -32,6 +32,7 @@
 #include <vix/threadpool/WorkerId.hpp>
 #include <vix/threadpool/WorkerState.hpp>
 #include <vix/threadpool/WorkerThread.hpp>
+#include <vix/threadpool/detail/ScopeExit.hpp>
 #include <vix/threadpool/detail/WaitStrategy.hpp>
 #include <vix/threadpool/this_worker.hpp>
 
@@ -63,6 +64,11 @@ namespace vix::threadpool
      * @brief Number of queued tasks owned by this worker.
      */
     std::size_t pending_tasks;
+
+    /**
+     * @brief Number of tasks currently being executed by this worker.
+     */
+    std::uint64_t active_tasks;
 
     /**
      * @brief Total number of tasks accepted by this worker.
@@ -112,6 +118,7 @@ namespace vix::threadpool
           index(0),
           state(WorkerState::created),
           pending_tasks(0),
+          active_tasks(0),
           accepted_tasks(0),
           executed_tasks(0),
           completed_tasks(0),
@@ -167,6 +174,7 @@ namespace vix::threadpool
           cv_(),
           stopping_(false),
           drain_on_stop_(true),
+          active_tasks_(0),
           accepted_tasks_(0),
           executed_tasks_(0),
           completed_tasks_(0),
@@ -482,6 +490,7 @@ namespace vix::threadpool
       out.index = index_;
       out.state = state();
       out.pending_tasks = queue_.size();
+      out.active_tasks = active_tasks_.load(std::memory_order_relaxed);
       out.accepted_tasks = accepted_tasks_.load(std::memory_order_relaxed);
       out.executed_tasks = executed_tasks_.load(std::memory_order_relaxed);
       out.completed_tasks = completed_tasks_.load(std::memory_order_relaxed);
@@ -587,7 +596,7 @@ namespace vix::threadpool
 
       while (should_continue_loop())
       {
-        std::optional<Task> task = queue_.pop();
+        std::optional<Task> task = queue_.pop_active(active_tasks_);
 
         if (!task.has_value())
         {
@@ -655,6 +664,12 @@ namespace vix::threadpool
      */
     void execute_task(Task &task)
     {
+      auto active = detail::make_scope_exit(
+          [this]()
+          {
+            active_tasks_.fetch_sub(1, std::memory_order_relaxed);
+          });
+
       thread_.set_state(WorkerState::running);
       this_worker::set_task(task.id());
 
@@ -778,6 +793,11 @@ namespace vix::threadpool
      * @brief Whether queued work should be drained during shutdown.
      */
     std::atomic<bool> drain_on_stop_;
+
+    /**
+     * @brief Active task counter.
+     */
+    std::atomic<std::uint64_t> active_tasks_;
 
     /**
      * @brief Accepted task counter.

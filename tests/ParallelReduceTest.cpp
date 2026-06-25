@@ -179,7 +179,7 @@ TEST(ParallelReduceTest, PropagatesFirstExceptionAfterWaitingForChunks)
   std::vector<int> values{1, 2, 3, 4, 5};
 
   EXPECT_THROW(
-      vix::threadpool::parallel_reduce(
+      (void)vix::threadpool::parallel_reduce(
           pool,
           values,
           0,

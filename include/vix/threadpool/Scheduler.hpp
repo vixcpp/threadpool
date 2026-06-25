@@ -484,10 +484,11 @@ namespace vix::threadpool
         out.cancelled_tasks += wm.cancelled_tasks;
         out.timed_out_tasks += wm.timed_out_tasks;
 
-        if (wm.state == WorkerState::running)
+        out.active_tasks += wm.active_tasks;
+
+        if (wm.active_tasks > 0)
         {
           ++out.busy_workers;
-          ++out.active_tasks;
         }
         else if (wm.state == WorkerState::idle)
         {

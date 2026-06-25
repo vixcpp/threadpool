@@ -333,11 +333,11 @@ TEST(StressTest, MetricsAndStatsRemainConsistentAfterLoad)
 
   for (int i = 0; i < taskCount; ++i)
   {
-    pool.post(
+    ASSERT_TRUE(pool.post(
         [&counter]()
         {
           counter.fetch_add(1, std::memory_order_relaxed);
-        });
+        }));
   }
 
   pool.wait_idle();
@@ -362,12 +362,12 @@ TEST(StressTest, ShutdownWhileTasksAreRunningIsSafe)
 
   for (int i = 0; i < 20; ++i)
   {
-    pool.post(
+    ASSERT_TRUE(pool.post(
         [&started]()
         {
           started.fetch_add(1, std::memory_order_relaxed);
           std::this_thread::sleep_for(std::chrono::milliseconds{5});
-        });
+        }));
   }
 
   EXPECT_TRUE(

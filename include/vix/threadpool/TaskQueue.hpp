@@ -17,6 +17,8 @@
 #define VIX_THREADPOOL_TASK_QUEUE_HPP
 
 #include <algorithm>
+#include <atomic>
+#include <cstdint>
 #include <cstddef>
 #include <mutex>
 #include <optional>
@@ -159,6 +161,31 @@ namespace vix::threadpool
 
       Task task = std::move(tasks_.back());
       tasks_.pop_back();
+
+      return task;
+    }
+
+    /**
+     * @brief Pop the highest-priority task and mark it active atomically.
+     *
+     * @param activeTasks Counter incremented while the queue lock is held.
+     * @return Next task if one exists, std::nullopt otherwise.
+     */
+    [[nodiscard]] std::optional<Task> pop_active(
+        std::atomic<std::uint64_t> &activeTasks)
+    {
+      std::lock_guard<std::mutex> lock(mutex_);
+
+      if (tasks_.empty())
+      {
+        return std::nullopt;
+      }
+
+      std::pop_heap(tasks_.begin(), tasks_.end(), cmp_);
+
+      Task task = std::move(tasks_.back());
+      tasks_.pop_back();
+      activeTasks.fetch_add(1, std::memory_order_relaxed);
 
       return task;
     }
